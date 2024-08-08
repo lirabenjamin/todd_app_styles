@@ -111,7 +111,7 @@
     </div>
 
     <script>
-        const backendUrl = 'https://todd-app-styles.vercel.app'; // Replace with your Vercel backend URL
+        // const backendUrl = 'https://todd-app-styles.vercel.app'; // Replace with your Vercel backend URL
 
         document.addEventListener('DOMContentLoaded', async () => {
             await loadStyles();
@@ -120,7 +120,7 @@
 
         async function loadStyles() {
             try {
-                const response = await fetch(`${backendUrl}/api/styles`);
+                const response = await fetch(`/api/styles`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -160,7 +160,7 @@
             }
 
             try {
-                const response = await fetch(`${backendUrl}/api/rewrite-email?userid=${userId}`, {
+                const response = await fetch(`/api/rewrite-email?userid=${userId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
