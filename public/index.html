@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Rewriter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-size: 14px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            max-width: 1500px;
+            width: 100%;
+        }
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        textarea {
+            height: 350px;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        .style-button {
+            background-color: #e7e7e7;
+            color: black;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .style-button.active {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .word-count {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+        #outputContainer {
+            position: relative;
+        }
+        #outputEmail {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            height: 350px;
+            overflow-y: auto;
+            white-space: pre-wrap; /* This will preserve line breaks */
+        }
+        #copyOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(76, 175, 80, 0.8);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="column">
+            <div class="word-count" id="inputWordCount">0 words</div>
+            <textarea id="inputEmail" placeholder="Paste your email here..."></textarea>
+            <div id="styleButtons" class="style-buttons"></div>
+            <button onclick="rewriteEmail()">Rewrite Email</button>
+        </div>
+        <div class="column" id="outputContainer">
+            <div class="word-count" id="outputWordCount">0 words</div>
+            <div id="outputEmail"></div>
+            <div id="copyOverlay">Click to copy</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadStyles();
+            addCopyFunctionality();
+        });
+
+        async function loadStyles() {
+            try {
+                const response = await fetch('http://localhost:3000/api/styles');  // Updated URL
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Styles fetched:', data);
+                const styleButtons = document.getElementById('styleButtons');
+
+                data.styles.forEach(style => {
+                    const button = document.createElement('button');
+                    button.classList.add('style-button');
+                    button.textContent = style.charAt(0).toUpperCase() + style.slice(1);
+                    button.onclick = () => selectStyle(style, button);
+                    styleButtons.appendChild(button);
+                });
+            } catch (error) {
+                console.error('Error fetching styles:', error);
+            }
+        }
+
+        let selectedStyle = '';
+
+        function selectStyle(style, button) {
+            selectedStyle = style;
+            document.querySelectorAll('.style-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+        }
+
+        async function rewriteEmail() {
+            const inputEmail = document.getElementById('inputEmail').value;
+            const userId = 'user123'; // Replace with actual user ID logic
+
+            if (!selectedStyle) {
+                alert('Please select a style');
+                return;
+            }
+
+            const response = await fetch(`http://localhost:3000/api/rewrite-email?userid=${userId}`, {  // Updated URL
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ inputEmail, style: selectedStyle })
+            });
+
+            const data = await response.json();
+            const outputEmail = document.getElementById('outputEmail');
+            outputEmail.textContent = data.rewrittenEmail;  // Use textContent to preserve whitespace and line breaks
+            updateWordCount('outputEmail', 'outputWordCount'); // Update word count for the output
+        }
+
+        function addCopyFunctionality() {
+            const outputContainer = document.getElementById('outputContainer');
+            const copyOverlay = document.getElementById('copyOverlay');
+            const outputEmail = document.getElementById('outputEmail');
+
+            outputContainer.addEventListener('mouseenter', () => {
+                copyOverlay.style.opacity = '1';
+            });
+
+            outputContainer.addEventListener('mouseleave', () => {
+                copyOverlay.style.opacity = '0';
+            });
+
+            outputContainer.addEventListener('click', () => {
+                const range = document.createRange();
+                range.selectNodeContents(outputEmail);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                document.execCommand('copy');
+                copyOverlay.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyOverlay.textContent = 'Click to copy';
+                }, 1500);
+            });
+        }
+
+        function updateWordCount(inputId, countId) {
+            const input = document.getElementById(inputId).textContent || document.getElementById(inputId).value;
+            const count = document.getElementById(countId);
+            const words = input.trim().split(/\s+/).filter(word => word.length > 0);
+            count.textContent = `${words.length} words`;
+        }
+
+        document.getElementById('inputEmail').addEventListener('input', () => {
+            updateWordCount('inputEmail', 'inputWordCount');
+        });
+    </script>
+</body>
+</html>

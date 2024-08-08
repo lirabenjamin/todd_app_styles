@@ -1,0 +1,19 @@
+{
+  "name": "email-rewriter",
+  "version": "1.0.0",
+  "description": "A serverless function to rewrite emails using OpenAI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "firebase": "^10.12.2",
+    "firebase-admin": "^12.2.0",
+    "mongoose": "^5.10.9",
+    "node-fetch": "^2.6.1",
+    "openai": "^4.0.0"
+  }
+}
