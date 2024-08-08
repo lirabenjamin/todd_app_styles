@@ -98,8 +98,10 @@
         <div class="column">
             <div class="word-count" id="inputWordCount">0 words</div>
             <textarea id="inputEmail" placeholder="Paste your email here..."></textarea>
-            <div id="styleButtons" class="style-buttons"></div>
-            <button onclick="rewriteEmail()">Rewrite Email</button>
+            <div class="buttons-container">
+                <div id="styleButtons" class="style-buttons"></div>
+            </div>
+            <button class="rewrite-button" onclick="rewriteEmail()">Rewrite Text</button>
         </div>
         <div class="column" id="outputContainer">
             <div class="word-count" id="outputWordCount">0 words</div>
@@ -109,6 +111,8 @@
     </div>
 
     <script>
+        const backendUrl = 'https://todd-app-styles.vercel.app'; // Replace with your Vercel backend URL
+
         document.addEventListener('DOMContentLoaded', async () => {
             await loadStyles();
             addCopyFunctionality();
@@ -116,8 +120,7 @@
 
         async function loadStyles() {
             try {
-                // const response = await fetch('http://localhost:3000/api/styles');  // Updated URL
-                const response = await fetch('/api/styles');  // Updated URL
+                const response = await fetch(`${backendUrl}/api/styles`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -156,18 +159,31 @@
                 return;
             }
 
-            const response = await fetch(`api/rewrite-email?userid=${userId}`, {  // Updated URL
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ inputEmail, style: selectedStyle })
-            });
+            try {
+                const response = await fetch(`${backendUrl}/api/rewrite-email?userid=${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ inputEmail, style: selectedStyle })
+                });
 
-            const data = await response.json();
-            const outputEmail = document.getElementById('outputEmail');
-            outputEmail.textContent = data.rewrittenEmail;  // Use textContent to preserve whitespace and line breaks
-            updateWordCount('outputEmail', 'outputWordCount'); // Update word count for the output
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (!data.rewrittenEmail) {
+                    throw new Error('No rewritten email returned');
+                }
+
+                const outputEmail = document.getElementById('outputEmail');
+                outputEmail.textContent = data.rewrittenEmail;  // Use textContent to preserve whitespace and line breaks
+                updateWordCount('outputEmail', 'outputWordCount'); // Update word count for the output
+            } catch (error) {
+                console.error('Error rewriting email:', error);
+                alert('An error occurred while rewriting the email. Please try again.');
+            }
         }
 
         function addCopyFunctionality() {
