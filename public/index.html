@@ -119,7 +119,7 @@
 <body>
     <div class="container">
         <div class="column">
-            <div class="word-count" id="inputWordCount">0 words</div>
+            <!-- <div class="word-count" id="inputWordCount">0 words</div> -->
             <textarea id="inputEmail" placeholder="Paste your text here...">
 This premium leather wallet is crafted with precision and care. Featuring multiple card slots, a secure coin pouch, and a sleek design, it is both functional and stylish. Available in a variety of colors, this wallet is the perfect accessory for anyone who values quality and elegance.
             </textarea>
@@ -129,7 +129,7 @@ This premium leather wallet is crafted with precision and care. Featuring multip
             <button class="rewrite-button" onclick="rewriteEmail()">Rewrite Text</button>
         </div>
         <div class="column" id="outputContainer">
-            <div class="word-count" id="outputWordCount">0 words</div>
+            <!-- <div class="word-count" id="outputWordCount">0 words</div> -->
             <div id="outputEmail"></div>
             <div id="copyOverlay">Click to copy</div>
             <div class="spinner" id="spinner"></div> <!-- Add spinner element -->
@@ -230,7 +230,7 @@ This premium leather wallet is crafted with precision and care. Featuring multip
 
                 const outputEmail = document.getElementById('outputEmail');
                 outputEmail.textContent = data.rewrittenEmail;  // Use textContent to preserve whitespace and line breaks
-                updateWordCount('outputEmail', 'outputWordCount'); // Update word count for the output
+                // updateWordCount('outputEmail', 'outputWordCount'); // Update word count for the output
             } catch (error) {
                 console.error('Error rewriting email:', error);
                 alert('An error occurred while rewriting the email. Please try again.');
@@ -266,16 +266,16 @@ This premium leather wallet is crafted with precision and care. Featuring multip
             });
         }
 
-        function updateWordCount(inputId, countId) {
-            const input = document.getElementById(inputId).textContent || document.getElementById(inputId).value;
-            const count = document.getElementById(countId);
-            const words = input.trim().split(/\s+/).filter(word => word.length > 0);
-            count.textContent = `${words.length} words`;
-        }
+        //function updateWordCount(inputId, countId) {
+        //    const input = document.getElementById(inputId).textContent || document.getElementById(inputId).value;
+        //    const count = document.getElementById(countId);
+        //    const words = input.trim().split(/\s+/).filter(word => word.length > 0);
+        //    count.textContent = `${words.length} words`;
+        //}
 
-        document.getElementById('inputEmail').addEventListener('input', () => {
-            updateWordCount('inputEmail', 'inputWordCount');
-        });
+        //document.getElementById('inputEmail').addEventListener('input', () => {
+        //    updateWordCount('inputEmail', 'inputWordCount');
+        //});
     </script>
 </body>
 </html>
