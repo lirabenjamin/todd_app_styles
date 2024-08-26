@@ -12,6 +12,12 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const MONGODB_URI = process.env.MONGODB_URI;
 
 app.use(cors()); // Use the cors middleware
+app.use((req, res, next) => {
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN'); // Allows iframe embedding from the same origin
+    // or
+    // res.setHeader('X-Frame-Options', 'ALLOW-FROM https://your-allowed-domain.com'); // Allows from a specific domain
+    next();
+});
 app.use(express.json());
 
 // Connect to MongoDB
