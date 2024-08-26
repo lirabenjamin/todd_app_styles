@@ -13,11 +13,10 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 app.use(cors()); // Use the cors middleware
 app.use((req, res, next) => {
-    res.setHeader('X-Frame-Options', 'SAMEORIGIN'); // Allows iframe embedding from the same origin
-    // or
-    // res.setHeader('X-Frame-Options', 'ALLOW-FROM https://your-allowed-domain.com'); // Allows from a specific domain
+    res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://co1.qualtrics.com");
     next();
 });
+
 app.use(express.json());
 
 // Connect to MongoDB
