@@ -13,7 +13,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 app.use(cors()); // Use the cors middleware
 app.use((req, res, next) => {
-    res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://co1.qualtrics.com");
+    res.setHeader('Content-Security-Policy', "frame-ancestors 'self' https://upenn.co1.qualtrics.com");
     next();
 });
 
