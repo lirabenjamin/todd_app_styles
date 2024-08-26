@@ -19,5 +19,16 @@
       "src": "/(.*)",
       "dest": "/public/index.html"
     }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN" // or "ALLOW-FROM https://your-allowed-domain.com"
+        }
+      ]
+    }
   ]
 }
