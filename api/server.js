@@ -12,10 +12,6 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const MONGODB_URI = process.env.MONGODB_URI;
 
 app.use(cors()); // Use the cors middleware
-app.use((req, res, next) => {
-    res.setHeader('X-Frame-Options', 'ALLOWALL');
-    next();
-});
 
 
 app.use(express.json());
