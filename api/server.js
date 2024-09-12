@@ -74,7 +74,7 @@ app.post('/api/rewrite-email', async (req, res) => {
                 'Authorization': `Bearer ${OPENAI_API_KEY}`
             },
             body: JSON.stringify({
-                model: "gpt-4o",
+                model: "gpt-4o-mini",
                 messages: messages,
                 max_tokens: 150,
             })
